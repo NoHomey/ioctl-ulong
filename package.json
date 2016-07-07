@@ -1,6 +1,6 @@
 {
   "name": "ioctl-ulong",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "unux'es ioctl addon wrapper working with unsigned long (both at user and kernel level, uses implicit cast from uit32_t to unsigned long so the limit is 4294967295 or 2^32)",
   "main": "index.js",
   "typings": "index.d.ts",
