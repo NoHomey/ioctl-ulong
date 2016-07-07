@@ -12,7 +12,7 @@ $ npm install ioctl-ulong
 
 # Purpose
 
-ioctl-ulong it's not just another ioctl C++ addon wrapper for Node.js. It's not even fully campatible ioctl C++ addon wrapper. It's only purpose is to transfer largest posible unsigned integers from Node.js to to kernel (for now this are uint32_t) and to do it fast as possible. It dosen't provide the functionality to transfer struct like data like ioctl wrapper found at npm (https://www.npmjs.com/package/ioctl). So if you want to transfer more data at once use ioctl instead or do bit shifting operations like in the example. Bit shifting operations are required some times like intensive use of integer and floats in kernel module where switching context from integer to floating mode cpu do costs performence. Because of uint32_t beeing the limit the largest possible number wich will correctly be transfered to your driver is 4294967295 or 2^32.
+ioctl-ulong it's not just another ioctl C++ addon wrapper for Node.js. It's not even fully campatible ioctl C++ addon wrapper. It's only purpose is to transfer largest posible unsigned integers from Node.js to to kernel (for now this are uint32_t) and to do it fast as possible. It dosen't provide the functionality to transfer struct like data like ioctl wrapper found at npm (https://www.npmjs.com/package/ioctl). So if you want to transfer more data at once use ioctl instead or do bit shifting operations like in the example. Bit shifting operations are required some times like mixed intensive use of both integer and float operations in kernel module where switching context from integer to floating mode cpu do costs performence. Because of uint32_t beeing the limit the largest possible number wich will correctly be transfered to your driver is 4294967295 or 2^32.
 
 ioctl-ulong also both provides information provided with pass by value and pass by reference from the kernel. Wich beeing said ioctl-ulong returns object with two fields {ioctl, data}, ioctl field holding the return value from making a successful syscall to ioctl and data which by default is 0, if third argument is provided data holds it's value if no value passed by reference is provided by the kernel else it's the value passed by reference is provided from the kernel data holds that value (More about that in the example).
 
@@ -87,6 +87,7 @@ interface Ioctl {
 declare function ioctl(fd: number, command: number, argument?: number): Ioctl;
 
 export { Ioctl, ioctl };
+```
 
 # FAQ
 
