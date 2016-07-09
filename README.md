@@ -108,4 +108,3 @@ A: I'm Ivo Stratev and I'm 19 years old who just finished high school at Technol
 There I've learn to code. I'm self taught in kernel programming currenlty only under Linux. I'm doing alot of IoT and for the interfaces I used to use Angular.js but now I'm using React and the new version of Angular (known as Angular 2) also using Node.js (express and Hapi) for middle layer in the communication with the device drivers I make.
 
 I haven't always been staticly typed fan I used to do alot of Ruby, Python and CoffeeScript but after my last big project which was all in Coffee and in the end was more than 10K lines of code I realised that static type do pay of so I recommend every JavaScript programmer to use TypeScript (even that I my self hate Microsoft (less nowadays) and what they have done ... mainly for IE Well there are there good things created by them: AJAX, TypeScript and VSCode).
-```
