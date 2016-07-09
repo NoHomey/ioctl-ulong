@@ -73,7 +73,140 @@ npm install ioctl
 
 # Example
 
-# Will be added in the next 2 hours!!!
+It is in TypeScript but pure JavaScript programmers shouldn't hvae problem with it just ignore type annotaions (It is a langauge of choice for me).
+
+For full working example code visit: (https://github.com/NoHomey/nodejs-ioctl-example).
+Example uses the following npm packages: ioctl-enum and open-ioctl go check them out if you are interested in them.
+
+Consider the follwing ioctl numbers:
+
+```c
+// ioctl_example.h
+#define IOCTL_EXAMPLE_MAGIC_NUMBER '?'
+
+#define IOCTL_EXAMPLE_ADDITION _IO(IOCTL_EXAMPLE_MAGIC_NUMBER, 0)
+
+#define IOCTL_EXAMPLE_SET _IOW(IOCTL_EXAMPLE_MAGIC_NUMBER, 1, unsigned long)
+
+#define IOCTL_EXAMPLE_GET _IOR(IOCTL_EXAMPLE_MAGIC_NUMBER, 2, unsigned long)
+
+#define IOCTL_EXAMPLE_ADD _IOWR(IOCTL_EXAMPLE_MAGIC_NUMBER, 3, unsigned long)
+```
+
+And the following functionality for them:
+
+```c
+// ioctl_example.c
+switch(command) {
+        case IOCTL_EXAMPLE_SET: {
+            return_value = get_user(tmp, (unsigned long __user*)argument);
+            n_A = float_n_construct(tmp);
+            addition = 0;
+            return return_value;
+        }
+        case IOCTL_EXAMPLE_GET: {
+            tmp = float_n_destruct(&n_A);
+            return put_user(tmp, (unsigned long __user*)argument);
+        }
+        case IOCTL_EXAMPLE_ADD: {
+            return_value = get_user(tmp, (unsigned long __user*)argument);
+            n_B = float_n_construct(tmp);
+            // This is just an example no carage or overflow is handled!
+            n_B.integral += n_A.integral;
+            n_B.fraction += n_A.fraction;
+            addition = 1;
+            tmp = float_n_destruct(&n_B);
+            return put_user(tmp, (unsigned long __user*)argument) | return_value;
+        }
+        case IOCTL_EXAMPLE_ADDITION: {
+            return addition;
+        }
+    }
+    return 0;
+```
+And then exporting them as TypeScript const enum for in TypeScript use (exporting to JavaScript Objects is ofcorse available):
+
+```c++
+// ioctl_export.cc
+#define IOCTL_ENUM_TS
+#include "node_modules/ioctl-enum/ioctl-enum.h"
+#include "ioctl_example.h"
+
+IOCTL_ENUM("IOCTL_EXAMPLE");
+IOCTL_ENUM_IOCTL("IOCTL_EXAMPLE_ADDITION", IOCTL_EXAMPLE_ADDITION);
+IOCTL_ENUM_IOCTL("IOCTL_EXAMPLE_SET", IOCTL_EXAMPLE_SET);
+IOCTL_ENUM_IOCTL("IOCTL_EXAMPLE_GET", IOCTL_EXAMPLE_GET);
+IOCTL_ENUM_IOCTL("IOCTL_EXAMPLE_ADD", IOCTL_EXAMPLE_ADD);
+IOCTL_ENUM_EXPORT();
+```
+
+And now controlling from TypeScript (well documented showing what is pass by value and pass by reference return from ioctl):
+
+```typescript
+// index.ts
+import { ioctl, Ioctl } from 'ioctl-ulong';
+import { IOCTL_EXAMPLE } from './IOCTL_EXAMPLE';
+import { openIoctlSync } from 'open-ioctl';
+import { closeSync } from 'fs';
+import { O_NONBLOCK } from 'constants';
+
+function printIoctl(res: Ioctl) {
+    console.log(`Ioctl: .ioctl = ${res.ioctl} .data = ${res.data}`);
+}
+
+// floating: float to be converted to unsigned long
+function fromFloat(floating: number): number {
+    let num: string[] = floating.toString().split('.'); // Forming [a, b]
+    let n: number = Number(num[0]) << 16; // n = a{16 bits}0{16 bits}
+    return n | Number(num[1]); // return a{16 bits}b{16 bits}
+}
+
+// ulong: unsigned long
+function fromUlong(ulong: number): number {
+    let integral: number = ulong >> 16; // integral = 16 Most significant bits from ulong
+    let fraction: number = ulong & 65535; // integral = 16 Least significant bits from ulong
+    return parseFloat(integral + '.' + fraction); // return Float(integral.fraction)
+}
+
+function checkForAddition(fd: number) {
+    let additon: Ioctl = ioctl(fd, IOCTL_EXAMPLE.IOCTL_EXAMPLE_ADDITION); // _IO
+    // .ioctl will be what ioctl returned if it was a non negative integer (value by value)
+    // .data will be 0
+
+    printIoctl(additon);
+    console.log(`Addition: ${Boolean(additon.ioctl)}`); // Addition true | false
+}
+
+let result: Ioctl;
+let fd: number = openIoctlSync('ioctl_example_dev'); // Open device driver in (3) ioctl non-blocking model;
+
+result = ioctl(fd, IOCTL_EXAMPLE.IOCTL_EXAMPLE_SET, fromFloat(12.3451)); // _IOR
+// .ioctl will be what ioctl returned if it was a non negative integer
+// .data will be what was passed to ioctl
+
+printIoctl(result);
+console.log(`Setting: ${fromUlong(result.data)}`); // Setting: 12.3451
+
+result = ioctl(fd, IOCTL_EXAMPLE.IOCTL_EXAMPLE_GET); // _IOW
+// .ioctl will be what ioctl returned if it was a non negative integer
+// .data will be what was passed from the kernel (device driver) (value by reference)
+
+printIoctl(result);
+console.log(`Getting: ${fromUlong(result.data)}`); // Getting: 12.3451
+
+checkForAddition(fd); // Addition: false
+
+result = ioctl(fd, IOCTL_EXAMPLE.IOCTL_EXAMPLE_ADD, fromFloat(23.5786)); // _IOWR
+// .ioctl will be what ioctl returned if it was a non negative integer
+// .data will be what was passed from the kernel (device driver) (value by reference)
+
+printIoctl(result);
+console.log(`Result: ${fromUlong(result.data)}`); // Result: 35.9237
+
+checkForAddition(fd); // Addition: true
+
+closeSync(fd); // Release device driver*/
+```
 
 ## TypeScript
 
