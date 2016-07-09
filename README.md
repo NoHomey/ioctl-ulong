@@ -148,7 +148,6 @@ import { ioctl, Ioctl } from 'ioctl-ulong';
 import { IOCTL_EXAMPLE } from './IOCTL_EXAMPLE';
 import { openIoctlSync } from 'open-ioctl';
 import { closeSync } from 'fs';
-import { O_NONBLOCK } from 'constants';
 
 function printIoctl(res: Ioctl) {
     console.log(`Ioctl: .ioctl = ${res.ioctl} .data = ${res.data}`);
