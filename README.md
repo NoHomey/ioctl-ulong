@@ -2,6 +2,9 @@
 
 unix'es ioctl addon wrapper working with unsigned long (both at user and kernel level, uses implicit cast from uit32_t to unsigned long so the limit is 4294967295 or 2^32)
 
+[![npm version](https://badge.fury.io/js/ioctl-ulong.svg)](https://badge.fury.io/js/ioctl-ulong)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/NoHomey/ioctl-ulong)
+
 # Installation
 
 Install with npm:
@@ -9,6 +12,8 @@ Install with npm:
 ```bash
 $ npm install ioctl-ulong
 ```
+
+[![NPM](https://nodei.co/npm/ioctl-ulong.png?downloads=true&stars=true)](https://nodei.co/npm/ioctl-ulong/)
 
 # Purpose
 
