@@ -1,6 +1,6 @@
 # ioctl-ulong
 
-unux'es ioctl addon wrapper working with unsigned long (both at user and kernel level, uses implicit cast from uit32_t to unsigned long so the limit is 4294967295 or 2^32)
+unix'es ioctl addon wrapper working with unsigned long (both at user and kernel level, uses implicit cast from uit32_t to unsigned long so the limit is 4294967295 or 2^32)
 
 # Installation
 
@@ -225,18 +225,4 @@ export { Ioctl, ioctl };
 
 # Q: Why implicit cast from uint32_t to unsinged long is needed ?
 
-A: You can not be sure if user mode uint32_t provided by compiler you are using matches kernel defention, by value they may match but when it comes to pointers unless it uses in kernel definistion they don't. Test if you don't belive me even gcc's definitions may vary from version to version after all libc is just a program ...
-
-## Q: Why are you natively supporting TypeScript ?
-
-A: Well as a kernel hacker and developer who is making JavaScript MVC** IoT interfaces and some Node.js addons I'm using C and C++ alot and having staticly typed code is how big projects are done right. Also I like TypeScript it's the first good thing in Microsoft I see ... But more about me in About me section below.
-
-# About me
-
-## Q: Who I'm ?
-
-A: I'm Ivo Stratev and I'm 19 years old who just finished high school at Technological school "Electronic Systems" at the Technical University - Sofia with 5.85 of possible 6.00.
-
-There I've learn to code. I'm self taught in kernel programming currenlty only under Linux. I'm doing alot of IoT and for the interfaces I used to use Angular.js but now I'm using React and the new version of Angular (known as Angular 2) also using Node.js (express and Hapi) for middle layer in the communication with the device drivers I make.
-
-I haven't always been staticly typed fan I used to do alot of Ruby, Python and CoffeeScript but after my last big project which was all in Coffee and in the end was more than 10K lines of code I realised that static type do pay of so I recommend every JavaScript programmer to use TypeScript (even that I my self hate Microsoft (less nowadays) and what they have done ... mainly for IE Well there are there good things created by them: AJAX, TypeScript and VSCode).
+A: You can not be sure if the user mode uint32_t provided by compiler you are using matches the defention used by the kernel, by value they may match but when it comes to pointers (unless it uses in kernel definistion) they don't. Test if you don't belive me even gcc's definitions may vary from version to version, after all libc is just a user space program ...
