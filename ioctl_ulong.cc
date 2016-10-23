@@ -2,27 +2,33 @@
 #include <sys/ioctl.h>
 #include "nan.h"
 
+#define IsArgType(arg, Type) info[arg]->Is##Type()
+
+#define ArgType(arg, Type, msg) \
+if(!IsArgType(arg, Type)) { \
+    return Nan::ThrowTypeError(msg); \
+}
+
+#define ArgToValue(arg, Type) info[arg]->Type##Value()
+
+#define SetProperty(prop, Type, type, value) Nan::Set(return_value, Nan::New<v8::String>(prop).ToLocalChecked(), Nan::New<v8::Type>(static_cast<type>(value)))
+
 NAN_METHOD(IoctlUlong) {
     Nan::HandleScope scope;
     v8::Local<v8::Object> return_value = Nan::New<v8::Object>();
     long ioctl_return;
     unsigned long argument = 0;
-    if(!info[0]->IsInt32()) {
-        return Nan::ThrowTypeError("First Argument Must be an Integer (valid file discriptor)");
+    ArgType(0, Int32, "First Argument Must be an Integer (valid file discriptor)")
+    ArgType(1, Uint32, "Second Argument Must be an Integer (uint32_t) (valid ioctl)")
+    if(IsArgType(2, Uint32)) {
+        argument = ArgToValue(2, Uint32);
     }
-    if (!info[1]->IsUint32()) {
-        return Nan::ThrowTypeError("Second Argument Must be an Integer (uint32_t) (valid ioct)");
-    }
-    if(!info[2]->IsUndefined() && info[1]->IsUint32()) {
-        argument = info[2]->Uint32Value();
-    }
-    errno = 0;
-    ioctl_return = ioctl(info[0]->Int32Value(), info[1]->Uint32Value(), &argument);
+    ioctl_return = ioctl(ArgToValue(0, Int32), ArgToValue(1, Uint32), &argument);
     if(ioctl_return < 0) {
-         return Nan::ThrowError(Nan::ErrnoException(errno, "ioctl", strerror(errno)));
+         return Nan::ThrowError(Nan::ErrnoException(errno, "ioctl"));
     }
-    Nan::Set(return_value, Nan::New<v8::String>("ioctl").ToLocalChecked(), Nan::New<v8::Int32>(static_cast<int32_t>(ioctl_return)));
-    Nan::Set(return_value, Nan::New<v8::String>("data").ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(argument)));
+    SetProperty("ioctl", Int32, int32_t, ioctl_return);
+    SetProperty("data", Uint32, uint32_t, argument);
     info.GetReturnValue().Set(return_value);
 }
 

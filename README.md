@@ -4,6 +4,8 @@ unix'es ioctl addon wrapper working with unsigned long (both at user and kernel 
 
 [![npm version](https://badge.fury.io/js/ioctl-ulong.svg)](https://badge.fury.io/js/ioctl-ulong)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/NoHomey/ioctl-ulong)
+![TypeScript](https://img.shields.io/badge/%3C%20%2F%3E-TypeScript-blue.svg)
+![Typings](https://img.shields.io/badge/typings-%E2%9C%93-brightgreen.svg)
 
 # Installation
 
@@ -29,32 +31,6 @@ In order ioctl-ulong to have best performence this is the algorithm it uses:
 4. It resets errno.
 5. It makes a sys call to ioctl.
 6. If ioctl call was unsuccessful it's return value is less than 0 it throws a ErrnoException with information about the error else if the call was successful it returns an object { ioctl: ioctl_return_value, data: 0 | argument | data_from_kernel }.
-
-In fact this is ioctl-ulong source code:
-
-```c++
-    Nan::HandleScope scope;
-    v8::Local<v8::Object> return_value = Nan::New<v8::Object>();
-    long ioctl_return;
-    unsigned long argument = 0;
-    if(!info[0]->IsInt32()) {
-        return Nan::ThrowTypeError("First Argument Must be an Integer (valid file discriptor)");
-    }
-    if (!info[1]->IsUint32()) {
-        return Nan::ThrowTypeError("Second Argument Must be an Integer (uint32_t) (valid ioct)");
-    }
-    if(!info[2]->IsUndefined() && info[1]->IsUint32()) {
-        argument = info[2]->Uint32Value();
-    }
-    errno = 0;
-    ioctl_return = ioctl(info[0]->Int32Value(), info[1]->Uint32Value(), &argument);
-    if(ioctl_return < 0) {
-         return Nan::ThrowError(Nan::ErrnoException(errno, "ioctl", strerror(errno)));
-    }
-    Nan::Set(return_value, Nan::New<v8::String>("ioctl").ToLocalChecked(), Nan::New<v8::Int32>(static_cast<int32_t>(ioctl_return)));
-    Nan::Set(return_value, Nan::New<v8::String>("data").ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(argument)));
-    info.GetReturnValue().Set(return_value);
-```
 
 Also ioctl-ulong is TypeScript ready, it ships with definition file.
 
