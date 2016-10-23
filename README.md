@@ -44,7 +44,7 @@ npm install ioctl
 
 # Usage
 
-## ioctl(fd, ioctl_number, argumet?)
+## ioctl(fd: number, ioctl_number: number, argumet?: number): { ioctl: number, data: number }
 
 ### fd: opened file descriptor (int32_t)
 
